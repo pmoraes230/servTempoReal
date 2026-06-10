@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { publishMessage } from "../redis/publisher";
-import websocketAuth from "../websocket/websocket.auth";
-const { requireApiToken } = websocketAuth;
+// import default from "../websocket/websocket.auth";
+// const { requireApiToken } = default;
 import { validatePublishMessage } from "../validators/message.validator";
 
 const router = Router();

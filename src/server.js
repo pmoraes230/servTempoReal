@@ -1,26 +1,26 @@
-const http = require("http");
-const createApp = require("./app");
-const env = require("./config/env");
-const { disconnectRedis } = require("./config/redis");
-const { attachWebSocketServer } = require("./websocket/websocket.server");
-const logger = require("./utils/logger");
+import { createServer } from "http";
+import createApp from "./app";
+import { port as _port, redisUrl } from "./config/env";
+import { disconnectRedis } from "./config/redis";
+import { attachWebSocketServer } from "./websocket/websocket.server";
+import { info } from "./utils/logger";
 
-const server = http.createServer();
+const server = createServer();
 const websocketGateway = attachWebSocketServer(server);
 const app = createApp(websocketGateway);
 
 server.on("request", app);
 
-server.listen(env.port, () => {
-  logger.info("Realtime server started", {
-    port: env.port,
-    websocketUrl: `ws://localhost:${env.port}`,
-    redisEnabled: Boolean(env.redisUrl),
+server.listen(_port, () => {
+  info("Realtime server started", {
+    port: _port,
+    websocketUrl: `ws://localhost:${_port}`,
+    redisEnabled: Boolean(redisUrl),
   });
 });
 
 async function shutdown(signal) {
-  logger.info("Shutting down server", { signal });
+  info("Shutting down server", { signal });
 
   server.close(async () => {
     await disconnectRedis();

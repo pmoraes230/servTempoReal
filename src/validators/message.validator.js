@@ -54,7 +54,7 @@ function validateWebSocketMessage(rawMessage) {
   }
 }
 
-module.exports = {
+export default {
   validatePublishMessage,
   validateWebSocketMessage,
 };

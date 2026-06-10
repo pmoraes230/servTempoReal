@@ -1,27 +1,21 @@
-const WebSocket = require("ws");
-const { authenticateRequest } = require("./websocket.auth");
-const {
-  addClient,
-  removeClient,
-  subscribeClient,
-  unsubscribeClient,
-  getStats,
-} = require("./websocket.clients");
-const {
-  validateWebSocketMessage,
-} = require("../validators/message.validator");
-const { publishMessage } = require("../redis/publisher");
-const { subscribeRedisChannel } = require("../redis/subscriber");
-const logger = require("../utils/logger");
+import { OPEN, Server } from "ws";
+import { authenticateRequest } from "./websocket.auth";
+import { addClient, removeClient, subscribeClient, unsubscribeClient, getStats } from "./websocket.clients";
+import { validateWebSocketMessage } from "../validators/message.validator";
+import { publishMessage } from "../redis/publisher";
+import { subscribeRedisChannel } from "../redis/subscriber";
+import { canSubscribe } from "../security/channel-policy";
+import { jwtSecret, allowClientPublish } from "../config/env";
+import { info, error as _error } from "../utils/logger";
 
 function sendJson(socket, message) {
-  if (socket.readyState === WebSocket.OPEN) {
+  if (socket.readyState === OPEN) {
     socket.send(JSON.stringify(message));
   }
 }
 
 function attachWebSocketServer(server) {
-  const wss = new WebSocket.Server({ noServer: true });
+  const wss = new Server({ noServer: true });
 
   server.on("upgrade", (request, socket, head) => {
     const auth = authenticateRequest(request);
@@ -32,6 +26,8 @@ function attachWebSocketServer(server) {
       return;
     }
 
+    request.identity = auth.identity;
+
     wss.handleUpgrade(request, socket, head, (ws) => {
       wss.emit("connection", ws, request);
     });
@@ -41,9 +37,10 @@ function attachWebSocketServer(server) {
     const client = addClient(socket, {
       ip: request.socket.remoteAddress,
       userAgent: request.headers["user-agent"],
+      identity: request.identity,
     });
 
-    logger.info("WebSocket client connected", { clientId: client.id });
+    info("WebSocket client connected", { clientId: client.id });
 
     sendJson(socket, {
       event: "connected",
@@ -61,6 +58,15 @@ function attachWebSocketServer(server) {
       const message = validation.value;
 
       if (message.type === "subscribe") {
+        if (jwtSecret && !canSubscribe(client.metadata.identity, message.channel)) {
+          sendJson(socket, {
+            event: "forbidden",
+            channel: message.channel,
+            reason: "You are not allowed to subscribe to this channel",
+          });
+          return;
+        }
+
         subscribeClient(client, message.channel);
         await subscribeRedisChannel(message.channel);
         sendJson(socket, { event: "subscribed", channel: message.channel });
@@ -74,6 +80,14 @@ function attachWebSocketServer(server) {
       }
 
       if (message.type === "publish") {
+        if (!allowClientPublish) {
+          sendJson(socket, {
+            event: "forbidden",
+            reason: "Client publish is disabled",
+          });
+          return;
+        }
+
         const result = await publishMessage(message);
         sendJson(socket, { event: "published", channel: message.channel, result });
       }
@@ -81,11 +95,11 @@ function attachWebSocketServer(server) {
 
     socket.on("close", () => {
       removeClient(client);
-      logger.info("WebSocket client disconnected", { clientId: client.id });
+      info("WebSocket client disconnected", { clientId: client.id });
     });
 
     socket.on("error", (error) => {
-      logger.error("WebSocket client error", {
+      _error("WebSocket client error", {
         clientId: client.id,
         error: error.message,
       });
@@ -98,6 +112,6 @@ function attachWebSocketServer(server) {
   };
 }
 
-module.exports = {
+export default {
   attachWebSocketServer,
 };

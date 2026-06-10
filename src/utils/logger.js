@@ -28,9 +28,7 @@ function write(level, message, meta) {
   console.log(line);
 }
 
-module.exports = {
-  info: (message, meta) => write("info", message, meta),
-  warn: (message, meta) => write("warn", message, meta),
-  error: (message, meta) => write("error", message, meta),
-  debug: (message, meta) => write("debug", message, meta),
-};
+export function info(message, meta) { return write("info", message, meta); }
+export function warn(message, meta) { return write("warn", message, meta); }
+export function error(message, meta) { return write("error", message, meta); }
+export function debug(message, meta) { return write("debug", message, meta); }

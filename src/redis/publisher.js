@@ -1,6 +1,5 @@
 import { getPublisherClient } from "../config/redis";
-import websocketBroadcast from "../websocket/websocket.broadcast";
-const { broadcastToChannel } = websocketBroadcast;
+import { broadcastToChannel } from "../websocket/websocket.broadcast";
 
 async function publishMessage(message) {
   const client = await getPublisherClient();

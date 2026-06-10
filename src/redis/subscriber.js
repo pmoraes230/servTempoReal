@@ -1,6 +1,6 @@
-const { getSubscriberClient } = require("../config/redis");
-const { broadcastToChannel } = require("../websocket/websocket.broadcast");
-const logger = require("../utils/logger");
+import { getSubscriberClient } from "../config/redis";
+import { broadcastToChannel } from "../websocket/websocket.broadcast";
+import { error as _error } from "../utils/logger";
 
 const subscribedChannels = new Set();
 
@@ -21,7 +21,7 @@ async function subscribeRedisChannel(channel) {
       const message = JSON.parse(rawMessage);
       broadcastToChannel(message);
     } catch (error) {
-      logger.error("Invalid Redis message", { error: error.message, channel });
+      _error("Invalid Redis message", { error: error.message, channel });
     }
   });
 
@@ -44,7 +44,7 @@ async function unsubscribeRedisChannel(channel) {
   return true;
 }
 
-module.exports = {
+export default {
   subscribeRedisChannel,
   unsubscribeRedisChannel,
 };

@@ -1,17 +1,17 @@
 import { createClient } from "redis";
-import env from "./env";
+import { redisUrl } from "./env";
 import { warn, error as _error, info } from "../utils/logger";
 
 let publisherClient;
 let subscriberClient;
 
 async function createRedisClient(name) {
-  if (!env.redisUrl) {
+  if (!redisUrl) {
     warn(`Redis disabled for ${name}: REDIS_URL is not configured`);
     return null;
   }
 
-  const client = createClient({ url: env.redisUrl });
+  const client = createClient({ url: redisUrl });
 
   client.on("error", (error) => {
     _error(`Redis ${name} error`, { error: error.message });
@@ -40,7 +40,6 @@ async function getSubscriberClient() {
 
 async function disconnectRedis() {
   const clients = [publisherClient, subscriberClient].filter(Boolean);
-
   await Promise.allSettled(clients.map((client) => client.quit()));
 }
 
