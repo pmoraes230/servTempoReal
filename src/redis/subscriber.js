@@ -1,10 +1,10 @@
-import { getSubscriberClient } from "../config/redis";
-import { broadcastToChannel } from "../websocket/websocket.broadcast";
-import { error as _error } from "../utils/logger";
+import { getSubscriberClient } from "../config/redis.js";
+import { broadcastToChannel } from "../websocket/websocket.broadcast.js";
+import { error as _error } from "../utils/logger.js";
 
 const subscribedChannels = new Set();
 
-async function subscribeRedisChannel(channel) {
+export async function subscribeRedisChannel(channel) {
   if (subscribedChannels.has(channel)) {
     return false;
   }
@@ -29,7 +29,7 @@ async function subscribeRedisChannel(channel) {
   return true;
 }
 
-async function unsubscribeRedisChannel(channel) {
+export async function unsubscribeRedisChannel(channel) {
   if (!subscribedChannels.has(channel)) {
     return false;
   }

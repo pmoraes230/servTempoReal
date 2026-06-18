@@ -1,13 +1,13 @@
-import { error as _error } from "../utils/logger";
+import { error as _error } from "../utils/logger.js";
 
-function notFoundMiddleware(request, response) {
+export function notFoundMiddleware(request, response) {
   response.status(404).json({
     error: "Not found",
     path: request.originalUrl,
   });
 }
 
-function errorMiddleware(error, request, response, next) {
+export function errorMiddleware(error, request, response, next) {
   _error("Unhandled request error", {
     error: error.message,
     path: request.originalUrl,

@@ -2,6 +2,7 @@
   "name": "servtemporeal",
   "version": "1.0.0",
   "description": "Servidor WebSocket para comunicacao em tempo real",
+  "type": "module",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

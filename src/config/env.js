@@ -1,4 +1,4 @@
-require("dotenv").config();
+import "dotenv/config";
 
 const env = {
   nodeEnv: process.env.NODE_ENV || "development",
@@ -14,3 +14,13 @@ const env = {
 };
 
 export default env;
+export const nodeEnv = env.nodeEnv;
+export const port = env.port;
+export const redisUrl = env.redisUrl;
+export const apiToken = env.apiToken;
+export const websocketToken = env.websocketToken;
+export const jwtSecret = env.jwtSecret;
+export const allowClientPublish = env.allowClientPublish;
+export const corsOrigin = env.corsOrigin;
+export const rateLimitWindowMs = env.rateLimitWindowMs;
+export const rateLimitMax = env.rateLimitMax;

@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 const clients = new Map();
 const channels = new Map();
 
-function addClient(socket, metadata = {}) {
+export function addClient(socket, metadata = {}) {
   const id = metadata.id || randomUUID();
   const client = {
     id,
@@ -17,7 +17,7 @@ function addClient(socket, metadata = {}) {
   return client;
 }
 
-function removeClient(client) {
+export function removeClient(client) {
   if (!client) {
     return;
   }
@@ -29,7 +29,7 @@ function removeClient(client) {
   clients.delete(client.id);
 }
 
-function subscribeClient(client, channel) {
+export function subscribeClient(client, channel) {
   if (!channels.has(channel)) {
     channels.set(channel, new Set());
   }
@@ -38,7 +38,7 @@ function subscribeClient(client, channel) {
   client.channels.add(channel);
 }
 
-function unsubscribeClient(client, channel) {
+export function unsubscribeClient(client, channel) {
   const subscribers = channels.get(channel);
 
   if (subscribers) {
@@ -52,7 +52,7 @@ function unsubscribeClient(client, channel) {
   client.channels.delete(channel);
 }
 
-function getClientsByChannel(channel) {
+export function getClientsByChannel(channel) {
   const subscribers = channels.get(channel);
 
   if (!subscribers) {
@@ -62,7 +62,7 @@ function getClientsByChannel(channel) {
   return [...subscribers].map((id) => clients.get(id)).filter(Boolean);
 }
 
-function getStats() {
+export function getStats() {
   return {
     clients: clients.size,
     channels: channels.size,

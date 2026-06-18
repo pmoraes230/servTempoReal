@@ -1,9 +1,9 @@
 import { createServer } from "http";
-import createApp from "./app";
-import { port as _port, redisUrl } from "./config/env";
-import { disconnectRedis } from "./config/redis";
-import { attachWebSocketServer } from "./websocket/websocket.server";
-import { info } from "./utils/logger";
+import createApp from "./app.js";
+import { port as _port, redisUrl } from "./config/env.js";
+import { disconnectRedis } from "./config/redis.js";
+import { attachWebSocketServer } from "./websocket/websocket.server.js";
+import { info } from "./utils/logger.js";
 
 const server = createServer();
 const websocketGateway = attachWebSocketServer(server);

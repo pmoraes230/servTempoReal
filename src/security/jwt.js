@@ -18,7 +18,7 @@ function base64UrlEncode(value) {
     .replace(/\//g, "_");
 }
 
-function verifyHs256Jwt(token, secret) {
+export function verifyHs256Jwt(token, secret) {
   const parts = String(token || "").split(".");
 
   if (parts.length !== 3) {

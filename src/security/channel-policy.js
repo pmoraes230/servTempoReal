@@ -7,7 +7,7 @@ function hasPermission(identity, permission) {
   return Array.isArray(identity.permissions) && identity.permissions.includes(permission);
 }
 
-function canSubscribe(identity, channel) {
+export function canSubscribe(identity, channel) {
   if (!identity || identity.type === "anonymous") {
     return false;
   }

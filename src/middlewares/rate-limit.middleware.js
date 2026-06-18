@@ -1,4 +1,4 @@
-import { rateLimitWindowMs, rateLimitMax } from "../config/env";
+import { rateLimitWindowMs, rateLimitMax } from "../config/env.js";
 
 const hits = new Map();
 

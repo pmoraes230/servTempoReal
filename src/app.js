@@ -1,9 +1,9 @@
 import express, { json } from "express";
 import cors from "cors";
-import { corsOrigin } from "./config/env";
-import publishRoutes from "./routes/publish.routes";
-import rateLimitMiddleware from "./middlewares/rate-limit.middleware";
-import { notFoundMiddleware, errorMiddleware } from "./middlewares/error.middleware";
+import { corsOrigin } from "./config/env.js";
+import publishRoutes from "./routes/publish.routes.js";
+import rateLimitMiddleware from "./middlewares/rate-limit.middleware.js";
+import { notFoundMiddleware, errorMiddleware } from "./middlewares/error.middleware.js";
 
 function createApp(websocketGateway) {
   const app = express();

@@ -1,4 +1,4 @@
-function validatePublishMessage(body) {
+export function validatePublishMessage(body) {
   const errors = [];
 
   if (!body || typeof body !== "object") {
@@ -24,7 +24,7 @@ function validatePublishMessage(body) {
   };
 }
 
-function validateWebSocketMessage(rawMessage) {
+export function validateWebSocketMessage(rawMessage) {
   try {
     const message = JSON.parse(rawMessage.toString());
 

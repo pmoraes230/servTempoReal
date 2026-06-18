@@ -1,6 +1,6 @@
 import { URL } from "url";
-import { jwtSecret, websocketToken, apiToken } from "../config/env";
-import { verifyHs256Jwt } from "../security/jwt";
+import { jwtSecret, websocketToken, apiToken } from "../config/env.js";
+import { verifyHs256Jwt } from "../security/jwt.js";
 
 function getBearerToken(request) {
   const authorization = request.headers.authorization || "";
@@ -27,7 +27,7 @@ function buildIdentityFromJwt(payload) {
   };
 }
 
-function authenticateRequest(request) {
+export function authenticateRequest(request) {
   const token = getRequestToken(request);
 
   if (jwtSecret) {
@@ -53,7 +53,7 @@ function authenticateRequest(request) {
   };
 }
 
-function requireApiToken(request, response, next) {
+export function requireApiToken(request, response, next) {
   if (!apiToken) {
     next();
     return;

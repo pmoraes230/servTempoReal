@@ -1,6 +1,6 @@
 import { createClient } from "redis";
-import { redisUrl } from "./env";
-import { warn, error as _error, info } from "../utils/logger";
+import { redisUrl } from "./env.js";
+import { warn, error as _error, info } from "../utils/logger.js";
 
 let publisherClient;
 let subscriberClient;
@@ -22,7 +22,7 @@ async function createRedisClient(name) {
   return client;
 }
 
-async function getPublisherClient() {
+export async function getPublisherClient() {
   if (!publisherClient) {
     publisherClient = await createRedisClient("publisher");
   }
@@ -30,7 +30,7 @@ async function getPublisherClient() {
   return publisherClient;
 }
 
-async function getSubscriberClient() {
+export async function getSubscriberClient() {
   if (!subscriberClient) {
     subscriberClient = await createRedisClient("subscriber");
   }
@@ -38,7 +38,7 @@ async function getSubscriberClient() {
   return subscriberClient;
 }
 
-async function disconnectRedis() {
+export async function disconnectRedis() {
   const clients = [publisherClient, subscriberClient].filter(Boolean);
   await Promise.allSettled(clients.map((client) => client.quit()));
 }

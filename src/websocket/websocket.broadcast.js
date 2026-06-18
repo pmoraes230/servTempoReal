@@ -1,5 +1,7 @@
-const WebSocket = require("ws");
-const { getClientsByChannel } = require("./websocket.clients").default;
+import WebSocket from "ws";
+import { getClientsByChannel } from "./websocket.clients.js";
+
+const { OPEN } = WebSocket;
 
 function buildMessage({ channel, event = "message", payload }) {
   return JSON.stringify({
@@ -10,13 +12,13 @@ function buildMessage({ channel, event = "message", payload }) {
   });
 }
 
-function broadcastToChannel(message) {
+export function broadcastToChannel(message) {
   const serialized = buildMessage(message);
   const clients = getClientsByChannel(message.channel);
   let delivered = 0;
 
   for (const client of clients) {
-    if (client.socket.readyState === WebSocket.OPEN) {
+    if (client.socket.readyState === OPEN) {
       client.socket.send(serialized);
       delivered += 1;
     }
@@ -25,6 +27,6 @@ function broadcastToChannel(message) {
   return { delivered };
 }
 
-module.exports = {
+export default {
   broadcastToChannel,
 };

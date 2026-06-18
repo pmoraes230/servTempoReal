@@ -1,12 +1,14 @@
-import { OPEN, Server } from "ws";
-import { authenticateRequest } from "./websocket.auth";
-import { addClient, removeClient, subscribeClient, unsubscribeClient, getStats } from "./websocket.clients";
-import { validateWebSocketMessage } from "../validators/message.validator";
-import { publishMessage } from "../redis/publisher";
-import { subscribeRedisChannel } from "../redis/subscriber";
-import { canSubscribe } from "../security/channel-policy";
-import { jwtSecret, allowClientPublish } from "../config/env";
-import { info, error as _error } from "../utils/logger";
+import WebSocket, { WebSocketServer } from "ws";
+import { authenticateRequest } from "./websocket.auth.js";
+import { addClient, removeClient, subscribeClient, unsubscribeClient, getStats } from "./websocket.clients.js";
+import { validateWebSocketMessage } from "../validators/message.validator.js";
+import { publishMessage } from "../redis/publisher.js";
+import { subscribeRedisChannel } from "../redis/subscriber.js";
+import { canSubscribe } from "../security/channel-policy.js";
+import { jwtSecret, allowClientPublish } from "../config/env.js";
+import { info, error as _error } from "../utils/logger.js";
+
+const { OPEN } = WebSocket;
 
 function sendJson(socket, message) {
   if (socket.readyState === OPEN) {
@@ -14,8 +16,8 @@ function sendJson(socket, message) {
   }
 }
 
-function attachWebSocketServer(server) {
-  const wss = new Server({ noServer: true });
+export function attachWebSocketServer(server) {
+  const wss = new WebSocketServer({ noServer: true });
 
   server.on("upgrade", (request, socket, head) => {
     const auth = authenticateRequest(request);
